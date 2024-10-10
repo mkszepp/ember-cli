@@ -425,7 +425,9 @@ describe('Acceptance: ember new', function () {
 
   describe('verify fixtures', function () {
     function checkEslintConfig(fixturePath) {
-      expect(file('.eslintrc.js')).to.equal(file(path.join(__dirname, '../fixtures', fixturePath, '.eslintrc.js')));
+      expect(file('eslint.config.mjs')).to.equal(
+        file(path.join(__dirname, '../fixtures', fixturePath, 'eslint.config.mjs'))
+      );
     }
 
     function checkFileWithEmberCLIVersionReplacement(fixtureName, fileName) {
