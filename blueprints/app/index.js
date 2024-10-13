@@ -2,13 +2,8 @@
 
 const stringUtil = require('ember-cli-string-utils');
 const chalk = require('chalk');
-const globSync = require('glob').sync;
 const { isExperimentEnabled } = require('../../lib/experiments');
 const directoryForPackageName = require('../../lib/utilities/directory-for-package-name');
-const fs = require('fs/promises');
-const path = require('path');
-const { join } = require('path');
-const FileInfo = require('../../lib/models/file-info');
 
 module.exports = {
   description: 'The default blueprint for ember-cli projects.',
