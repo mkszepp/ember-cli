@@ -1,14 +1,16 @@
 'use strict';
 
+const path = require('path');
 const captureExit = require('capture-exit');
 captureExit.captureExit();
 
 const glob = require('glob');
 const Mocha = require('mocha');
+const mochaConfig = require(path.join(__dirname, '../.mocharc'));
 
 const { chai } = require('./bootstrap');
 
-const mocha = new Mocha();
+const mocha = new Mocha(mochaConfig);
 
 let root = 'tests/{unit,integration,acceptance}';
 let optionOrFile = process.argv[2];
