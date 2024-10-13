@@ -49,10 +49,21 @@ describe('Acceptance: ember init', function () {
     let blueprintPath = path.join(root, 'blueprints', 'app', 'files');
     // ignore .travis.yml and TypeScript files
     let expected = walkSync(blueprintPath, {
-      ignore: ['.travis.yml', 'tsconfig.json', 'types', 'app/config', '_js_eslint.config.mjs', '_ts_eslint.config.mjs'],
-    })
-      .map((name) => (typescript ? name : name.replace(/\.ts$/, '.js')))
-      .sort();
+      ignore: [
+        '.travis.yml',
+        'tsconfig.json',
+        'types',
+        'app/config',
+        // This style of assertion can't handle conditionally available files
+        '_js_eslint.config.mjs',
+        '_ts_eslint.config.mjs',
+        'eslint.config.mjs',
+      ],
+    }).map((name) => (typescript ? name : name.replace(/\.ts$/, '.js')));
+
+    expected.push('eslint.config.mjs');
+    expected.sort();
+
     let actual = walkSync('.').sort();
 
     Object.keys(Blueprint.renamedFiles).forEach((srcFile) => {
