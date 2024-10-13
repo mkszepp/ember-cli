@@ -1,25 +1,34 @@
-import globals from "globals";
-import js from "@eslint/js";
+import globals from 'globals';
+import js from '@eslint/js';
 
-import ts from "typescript-eslint";
+import ts from 'typescript-eslint';
 
-import ember from "eslint-plugin-ember";
-import emberRecommended from "eslint-plugin-ember/configs/recommended";
-import gjsRecommended from "eslint-plugin-ember/configs/recommended-gjs";
-import gtsRecommended from "eslint-plugin-ember/configs/recommended-gts";
+import ember from 'eslint-plugin-ember';
+import emberRecommended from 'eslint-plugin-ember/configs/recommended';
+import gjsRecommended from 'eslint-plugin-ember/configs/recommended-gjs';
+import gtsRecommended from 'eslint-plugin-ember/configs/recommended-gts';
 
-import prettier from "eslint-plugin-prettier/recommended";
-import qunit from "eslint-plugin-qunit";
-import n from "eslint-plugin-n";
+import prettier from 'eslint-plugin-prettier/recommended';
+import qunit from 'eslint-plugin-qunit';
+import n from 'eslint-plugin-n';
 
-import emberParser from "ember-eslint-parser";
-import babelParser from "@babel/eslint-parser";
+import emberParser from 'ember-eslint-parser';
+import babelParser from '@babel/eslint-parser';
 
 const parserOptions = {
   esm: {
     js: {
       ecmaFeatures: { modules: true },
-      ecmaVersion: "latest",
+      ecmaVersion: 'latest',
+      requireConfigFile: false,
+      babelOptions: {
+        plugins: [
+          [
+            '@babel/plugin-proposal-decorators',
+            { decoratorsBeforeExport: true },
+          ],
+        ],
+      },
     },
     ts: {
       projectService: true,
@@ -32,7 +41,7 @@ export default ts.config(
   js.configs.recommended,
   prettier,
   {
-    files: ["**/*.js"],
+    files: ['**/*.js'],
     languageOptions: {
       parser: babelParser,
       parserOptions: parserOptions.esm.js,
@@ -48,7 +57,7 @@ export default ts.config(
     },
   },
   {
-    files: ["**/*.ts"],
+    files: ['**/*.ts'],
     plugins: { ember },
     languageOptions: {
       parserOptions: parserOptions.esm.ts,
@@ -56,7 +65,7 @@ export default ts.config(
     extends: [...ts.configs.strictTypeChecked, ...emberRecommended],
   },
   {
-    files: ["**/*.gjs"],
+    files: ['**/*.gjs'],
     languageOptions: {
       parser: emberParser,
       parserOptions: parserOptions.esm.js,
@@ -73,7 +82,7 @@ export default ts.config(
     },
   },
   {
-    files: ["**/*.gts"],
+    files: ['**/*.gts'],
     plugins: { ember },
     languageOptions: {
       parserOptions: parserOptions.esm.ts,
@@ -85,7 +94,7 @@ export default ts.config(
     ],
   },
   {
-    files: ["tests/**/*-test.{js,gjs}"],
+    files: ['tests/**/*-test.{js,gjs}'],
     plugins: {
       qunit,
     },
@@ -95,22 +104,22 @@ export default ts.config(
    */
   {
     files: [
-      "**/*.cjs",
-      "config/**/*.js",
-      "testem.js",
-      "testem*.js",
-      ".prettierrc.js",
-      ".stylelintrc.js",
-      ".template-lintrc.js",
-      "ember-cli-build.js",
+      '**/*.cjs',
+      'config/**/*.js',
+      'testem.js',
+      'testem*.js',
+      '.prettierrc.js',
+      '.stylelintrc.js',
+      '.template-lintrc.js',
+      'ember-cli-build.js',
     ],
     plugins: {
       n,
     },
 
     languageOptions: {
-      sourceType: "script",
-      ecmaVersion: "latest",
+      sourceType: 'script',
+      ecmaVersion: 'latest',
       globals: {
         ...globals.node,
       },
@@ -120,14 +129,14 @@ export default ts.config(
    * ESM node files
    */
   {
-    files: ["*.mjs"],
+    files: ['*.mjs'],
     plugins: {
       n,
     },
 
     languageOptions: {
-      sourceType: "module",
-      ecmaVersion: "latest",
+      sourceType: 'module',
+      ecmaVersion: 'latest',
       parserOptions: parserOptions.esm.js,
       globals: {
         ...globals.node,
@@ -138,9 +147,9 @@ export default ts.config(
    * Settings
    */
   {
-    ignores: ["dist/", "node_modules/", "coverage/", "!**/.*"],
+    ignores: ['dist/', 'node_modules/', 'coverage/', '!**/.*'],
     linterOptions: {
-      reportUnusedDisableDirectives: "error",
+      reportUnusedDisableDirectives: 'error',
     },
   }
 );
