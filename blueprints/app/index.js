@@ -6,7 +6,9 @@ const globSync = require('glob').sync;
 const { isExperimentEnabled } = require('../../lib/experiments');
 const directoryForPackageName = require('../../lib/utilities/directory-for-package-name');
 const fs = require('fs/promises');
+const path = require('path');
 const { join } = require('path');
+const FileInfo = require('../../lib/models/file-info');
 
 module.exports = {
   description: 'The default blueprint for ember-cli projects.',
@@ -119,30 +121,46 @@ module.exports = {
     this.ui.writeLine(prependEmoji('✨', `Creating a new Ember app in ${chalk.yellow(process.cwd())}:`));
   },
 
-  async afterInstall(options) {
-    const jsOnly = globSync('**/_js_*', {
-      cwd: options.target,
-      nodir: true,
-      ignore: ['**/node_modules/**', 'node_modules/**'],
-    });
-    const tsOnly = globSync('**/_ts_*', {
-      cwd: options.target,
-      nodir: true,
-      ignore: ['**/node_modules/**', 'node_modules/**'],
-    });
+  /**
+   * @override
+   *
+   * This modification of buildFileInfo allows our differing
+   * input files to output to a single file, depending on the options.
+   * For example:
+   *
+   *   for javascript,
+   *     _ts_eslint.config.mjs is deleted
+   *     _js_eslint.config.mjs is renamed to eslint.config.mjs
+   *
+   *   for typescript,
+   *     _js_eslint.config.mjs is deleted
+   *     _ts_eslint.config.mjs is renamed to eslint.config.mjs
+   */
+  buildFileInfo(intoDir, templateVariables, file, options) {
+    let fileInfo = this._super.buildFileInfo.apply(this, arguments);
 
-    const filesToDelete = options.typescript ? jsOnly : tsOnly;
-    const filesToUnprefix = options.typescript ? tsOnly : jsOnly;
+    if (file.includes('_js_')) {
+      if (options.typescript) {
+        return null;
+      }
 
-    for (let file of filesToDelete) {
-      await fs.rm(join(options.target, file));
+      fileInfo.outputBasePath = fileInfo.outputPath.replace('_js_', '');
+      fileInfo.outputPath = fileInfo.outputPath.replace('_js_', '');
+      fileInfo.displayPath = fileInfo.outputPath.replace('_js_', '');
+      return fileInfo;
     }
 
-    for (let file of filesToUnprefix) {
-      let original = join(options.target, file);
-      let finalDestination = original.replace(/_(j|t)s_/, '');
+    if (file.includes('_ts_')) {
+      if (!options.typescript) {
+        return null;
+      }
 
-      await fs.rename(original, finalDestination);
+      fileInfo.outputBasePath = fileInfo.outputPath.replace('_ts_', '');
+      fileInfo.outputPath = fileInfo.outputPath.replace('_ts_', '');
+      fileInfo.displayPath = fileInfo.outputPath.replace('_ts_', '');
+      return fileInfo;
     }
+
+    return fileInfo;
   },
 };
